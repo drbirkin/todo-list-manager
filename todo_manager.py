@@ -34,6 +34,11 @@ def update_task (task_id, description):
     cursor.execute('UPDATE tasks SET description = ? WHERE id = ?', (description, task_id))
     conn.commit()
     
+def mark_task (task_id):
+    cursor.execute('SELECT completed FROM tasks WHERE id = ?', (task_id,))
+    output = cursor.fetchone()
+    cursor.execute('UPDATE tasks SET completed = ? WHERE id = ?', (0 if output[0] else 1, task_id))
+    
 def delete_task (task_id):
     cursor.execute('DELETE FROM tasks WHERE id = ?', {task_id})
     conn.commit()
@@ -49,9 +54,10 @@ if __name__ == '__main__':
         print('Todo List Manager')
         print('1. Add Task')
         print('2. Update Task')
-        print('3. Delete Task')
-        print('4. List Tasks')
-        print('5. Exit')
+        print('3. Complete Task')
+        print('4. Delete Task')
+        print('5. List Tasks')
+        print('6. Exit')
         
         choice = input('Select an option: ')
         
@@ -64,10 +70,13 @@ if __name__ == '__main__':
             update_task(task_id, description)
         elif choice == '3':
             task_id = int(input('Enter task ID: '))
-            delete_task(task_id)
+            mark_task(task_id)
         elif choice == '4':
-            display_tasks()
+            task_id = int(input('Enter task ID: '))
+            delete_task(task_id)
         elif choice == '5':
+            display_tasks()
+        elif choice == '6':
             break
         
     conn.close()
