@@ -25,3 +25,50 @@ except sqlite3.Error as error:
 #     if conn:
 #         conn.close()
 #         print('SQLite connection closed')
+
+def add_task (description):
+    cursor.execute('INSERT INTO tasks (description, completed) VALUES (?, 0)', (description,))
+    conn.commit()
+    
+def update_task (task_id, description):
+    cursor.execute('UPDATE tasks SET description = ? WHERE id = ?', (description, task_id))
+    conn.commit()
+    
+def delete_task (task_id):
+    cursor.execute('DELETE FROM tasks WHERE id = ?', {task_id})
+    conn.commit()
+    
+def display_tasks ():
+    cursor.execute('SELECT * FROM tasks')
+    tasks = cursor.fetchall()
+    for task in tasks:
+        print(f'{task[0]}. [{task[2] and "X" or " "}] {task[1]}')
+    
+if __name__ == '__main__':
+    while True:
+        print('Todo List Manager')
+        print('1. Add Task')
+        print('2. Update Task')
+        print('3. Delete Task')
+        print('4. List Tasks')
+        print('5. Exit')
+        
+        choice = input('Select an option: ')
+        
+        if choice == '1':
+            description = input ('Enter task description: ')
+            add_task(description)
+        elif choice == '2':
+            task_id = int(input('Enter task ID: '))
+            description = input ('Enter new task description: ')
+            update_task(task_id, description)
+        elif choice == '3':
+            task_id = int(input('Enter task ID: '))
+            delete_task(task_id)
+        elif choice == '4':
+            display_tasks()
+        elif choice == '5':
+            break
+        
+    conn.close()
+            
