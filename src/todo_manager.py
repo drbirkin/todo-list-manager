@@ -14,6 +14,7 @@ class TodoManager:
         self.db.cursor.execute('SELECT completed FROM tasks WHERE id = ?', (task_id,))
         output = self.db.cursor.fetchone()
         self.db.cursor.execute('UPDATE tasks SET completed = ? WHERE id = ?', (0 if output[0] else 1, task_id))
+        self.db.conn.commit()
         
     def delete_task (self, task_id):
         self.db.cursor.execute('DELETE FROM tasks WHERE id = ?', {task_id})
